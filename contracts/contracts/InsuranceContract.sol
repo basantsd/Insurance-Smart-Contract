@@ -9,6 +9,8 @@ contract InsuranceContract {
         insurer = msg.sender;
     }
 
+    uint[] public policyIds;
+
     struct Policy{
         address policyHolder;
         uint premium;
@@ -57,6 +59,7 @@ contract InsuranceContract {
             true,
             false
         );
+        policyIds.push(policyCounter);
         emit PolicyIssued(policyCounter, _policyHolder, _premium, _coverageAmount, _durationInDays);
     }
 
