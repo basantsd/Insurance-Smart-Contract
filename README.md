@@ -190,4 +190,3 @@ This project is licensed under the MIT License.
 ✅ Smart Contract
 ✅ Full-Stack Web3 Project
 ✅ Resume Booster 🚀
-```
