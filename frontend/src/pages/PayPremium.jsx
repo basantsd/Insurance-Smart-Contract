@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connectContract } from '../services/insurance';
 import { Container, TextField, Button, Typography } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import { ethers } from 'ethers';
 
 const PayPremium = () => {
   const [policyId, setPolicyId] = useState('');
   const [amount, setAmount] = useState('');
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    const premium = params.get('premium');
+    if (id) setPolicyId(id);
+    if (premium) setAmount(premium);
+  }, [location]);
 
   const handlePay = async () => {
     try {

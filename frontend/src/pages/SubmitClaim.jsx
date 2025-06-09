@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connectContract } from '../services/insurance';
 import { Container, TextField, Button, Typography } from '@mui/material';
 import { ethers } from 'ethers';
+import { useLocation } from 'react-router-dom';
 
 const SubmitClaim = () => {
   const [policyId, setPolicyId] = useState('');
   const [claimAmount, setClaimAmount] = useState('');
   const [reason, setReason] = useState('');
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    if (id) setPolicyId(id);
+  }, [location]);
 
   const handleSubmitClaim = async () => {
     try {
