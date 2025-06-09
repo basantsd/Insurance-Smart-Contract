@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Button, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const [wallet, setWallet] = useState("");
+  const location = useLocation();
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -28,25 +29,56 @@ const Navbar = () => {
       }
     }
     checkConnection();
-  }, []);
+  }, [location]);  // <-- dependency added here
+
+  const isActive = (path) => location.pathname === path;
+
+  const menuItems = [
+    { label: "Home", path: "/" },
+    { label: "Issue Policy", path: "/issue" },
+    { label: "View Policies", path: "/viewpolicy" },
+    { label: "Pay Premium", path: "/paypremium" },
+    { label: "Submit Claim", path: "/submitclaim" },
+    { label: "Claims List", path: "/claims" },
+    { label: "Approve Claim", path: "/approveclaim" },
+    { label: "Pay Claim", path: "/payclaim" },
+  ];
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: '#1f1f1f' }}>
       <Toolbar>
-        <Button color="inherit" component={Link} to="/">Home</Button>
-        <Button color="inherit" component={Link} to="/issue">Issue Policy</Button>
-        <Button color="inherit" component={Link} to="/paypremium">Pay Premium</Button>
-        <Button color="inherit" component={Link} to="/submitclaim">Submit Claim</Button>
-        <Button color="inherit" component={Link} to="/approveclaim">Approve Claim</Button>
-        <Button color="inherit" component={Link} to="/payclaim">Pay Claim</Button>
-        <Button color="inherit" component={Link} to="/viewpolicy">View Policies</Button>
+        {menuItems.map((item) => (
+          <Button
+            key={item.path}
+            component={Link}
+            to={item.path}
+            sx={{
+              color: isActive(item.path) ? '#fff' : '#ccc',
+              backgroundColor: isActive(item.path) ? '#1976d2' : 'transparent',
+              marginRight: 1,
+              '&:hover': {
+                backgroundColor: '#1565c0',
+                color: '#fff',
+              },
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: isActive(item.path) ? 'bold' : 'normal'
+            }}
+          >
+            {item.label}
+          </Button>
+        ))}
 
         {wallet ? (
           <Typography variant="body2" sx={{ marginLeft: 'auto' }}>
             Connected: {wallet.slice(0, 6)}...{wallet.slice(-4)}
           </Typography>
         ) : (
-          <Button color="inherit" sx={{ marginLeft: 'auto' }} onClick={connectWallet}>
+          <Button
+            color="inherit"
+            sx={{ marginLeft: 'auto', textTransform: 'none', fontWeight: 'bold' }}
+            onClick={connectWallet}
+          >
             Connect Wallet
           </Button>
         )}

@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connectContract } from '../services/insurance';
 import { Container, TextField, Button, Typography } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 const ApproveClaim = () => {
   const [claimId, setClaimId] = useState('');
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    if (id) setClaimId(id);
+  }, [location]);
 
   const handleApprove = async () => {
     try {
