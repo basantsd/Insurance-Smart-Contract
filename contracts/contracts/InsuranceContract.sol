@@ -20,6 +20,7 @@ contract InsuranceContract {
         uint256 duration;
         PolicyStatus status;
         ClaimStatus claimStatus;
+        uint256 totalPaidPremium;
     }
 
     struct Claim{
@@ -65,7 +66,8 @@ contract InsuranceContract {
             block.timestamp,
             block.timestamp + (_durationInDays * 1 days),
             PolicyStatus.Active,
-            ClaimStatus.Active
+            ClaimStatus.Active,
+            0
         );
         userPolicies[_policyHolder].push(policyCounter);
         emit PolicyIssued(policyCounter, _policyHolder, _premium, _coverageAmount, _durationInDays);
@@ -76,11 +78,15 @@ contract InsuranceContract {
         Policy storage policy = policies[_policyId];
         require(policy.policyHolder == msg.sender, "Only policyholder can pay premium");
         require(policy.status == PolicyStatus.Active, "Policy is not active");
-        require(block.timestamp <= policy.duration, "Policy has expired");
         require(msg.value == policy.premium, "Incorrect premium amount");
+
+        policy.totalPaidPremium += msg.value;
+        policy.duration += 30 days; // Extend by 30 days
+        policy.coverageAmount += policy.coverageAmount / 10; // Increase coverage by 10%
 
         emit PremiumPaid(_policyId, msg.sender, msg.value);
     }
+
 
     // Policyholder submits claim
     function submitClaim(uint _policyId, uint _claimAmount, string memory _reason) external {
